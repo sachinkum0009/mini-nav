@@ -2,6 +2,13 @@
 name = "mini-nav-controller"
 version = "0.1.0"
 edition = "2024"
+authors = ["Sachin Kumar <sachinkumar.ar97@gmail.com>"]
+description = "Package for implementing controller"
+readme = "README.md"
+repository = "https://github.com/sachinkum0009/mini-nav"
+license = "Apache-2.0"
+keywords = ["mininav", "controller", "navigation"]
+
 
 [dependencies]
 tokio = { version = "1.53.1", features = ["full"] }
