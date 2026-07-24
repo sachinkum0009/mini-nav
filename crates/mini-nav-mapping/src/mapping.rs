@@ -1,0 +1,2 @@
+/// # Mapping
+pub struct Mapping;

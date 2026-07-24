@@ -1,0 +1,2 @@
+/// Controller
+pub struct Controller;

@@ -1,2 +1,2 @@
-# mini-nav2
-Mini Nav2 for Robotics
+# mini-nav
+Mini Nav for Robotics with Low Resources

@@ -46,7 +46,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "mini-nav2"
+name = "mini-nav-controller"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "mini-nav-mapping"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "mini-nav-planner"
 version = "0.1.0"
 dependencies = [
  "tokio",
