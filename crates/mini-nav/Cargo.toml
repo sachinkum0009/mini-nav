@@ -1,0 +1,23 @@
+[package]
+name = "mini-nav"
+version = "0.1.0"
+edition = "2024"
+description = "Package for using navigation"
+readme = "README.md"
+repository = "https://github.com/sachinkum0009/mini-nav"
+license = "Apache-2.0"
+keywords = ["mininav", "robotics", "navigation"]
+
+[dependencies]
+tokio = { version = "1.53.1", features = ["full"] }
+hiroz = { git = "https://github.com/ZettaScaleLabs/hiroz.git", branch = "main"}
+hiroz-msgs = { git = "https://github.com/ZettaScaleLabs/hiroz.git", branch = "main"}
+mini-nav-controller = { path = "../mini-nav-controller" }
+mini-nav-mapping = { path = "../mini-nav-mapping" }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_yaml = "0.9.34"
+zenoh = "1.9.0"
+
+[[bin]]
+name = "publisher"
+path = "bin/publisher.rs"

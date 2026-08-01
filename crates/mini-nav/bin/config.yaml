@@ -1,0 +1,2 @@
+node_name: my_gmapping_node
+laser_topic: base_scan
