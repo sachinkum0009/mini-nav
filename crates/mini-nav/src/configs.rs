@@ -27,8 +27,8 @@ impl Default for GmappingConfig {
             laser_topic: "scan".to_string(),
             odom_topic: "odom".to_string(),
             map_topic: "map".to_string(),
-            grid_size: 100,
-            resolution: 0.1,
+            grid_size: 1000,
+            resolution: 0.05,
             timer_callback: Duration::from_millis(100),
         }
     }

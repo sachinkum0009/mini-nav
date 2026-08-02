@@ -30,6 +30,11 @@ impl GMapping {
         let grid_y = ((y / self.resolution) + (self.grid_size as f32 / 2.0)) as usize;
         (grid_x, grid_y)
     }
+
+    /// Returns the resolution
+    pub fn get_resolution(&self) -> f32 {
+        self.resolution
+    }
 }
 
 impl Mapping for GMapping {

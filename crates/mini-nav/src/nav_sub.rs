@@ -38,7 +38,7 @@ impl NavPub {
         let map_pub = node
             .create_pub::<RosOccupancyGrid>(&config.map_topic)
             .build()?;
-        let gmapping = GMapping::new(100, 0.1);
+        let gmapping = GMapping::new(config.grid_size, config.resolution);
         Ok(Self {
             node,
             laser_topic: laser_sub,
@@ -84,7 +84,9 @@ impl NavPub {
         let (rows, cols) = self.gmapping.get_grid_dimensions();
         msg.info.width = cols;
         msg.info.height = rows;
-        msg.info.resolution = 0.1;
+        msg.info.resolution = self.gmapping.get_resolution();
+        msg.info.origin.position.x = (cols as f64 / 2.0) * msg.info.resolution as f64;
+        msg.info.origin.position.y = (rows as f64 / 2.0) * msg.info.resolution as f64;
 
         loop {
             let odom_msg = self.odom_topic.async_recv().await?;
