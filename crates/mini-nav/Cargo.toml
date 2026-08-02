@@ -17,6 +17,7 @@ mini-nav-mapping = { path = "../mini-nav-mapping" }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_yaml = "0.9.34"
 zenoh = "1.9.0"
+rayon = "1.12.0"
 
 [[bin]]
 name = "publisher"

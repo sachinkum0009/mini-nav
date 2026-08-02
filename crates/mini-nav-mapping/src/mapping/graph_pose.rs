@@ -2,7 +2,7 @@
 pub struct GraphPose {}
 
 impl GraphPose {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Self {}
     }
 }

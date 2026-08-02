@@ -10,3 +10,12 @@ keywords = ["mininav", "mapping", "navigation"]
 
 [dependencies]
 tokio = { version = "1.53.1", features = ["full"] }
+hiroz = { git = "https://github.com/ZettaScaleLabs/hiroz.git", branch = "main"}
+hiroz-msgs = { git = "https://github.com/ZettaScaleLabs/hiroz.git", branch = "main"}
+mini-nav-controller = { path = "../mini-nav-controller" }
+nalgebra = "0.35.0"
+rayon = "1.12.0"
+
+[[bin]]
+name = "mapping_test"
+path = "bin/mapping_test.rs"

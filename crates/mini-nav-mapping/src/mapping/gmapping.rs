@@ -3,14 +3,14 @@ use std::sync::Mutex;
 use nalgebra::DMatrix;
 use rayon::prelude::*;
 
-use crate::mapping::{Mapping, Pose};
+use crate::mapping::Mapping;
 
 /// GMapping
 pub struct GMapping {
     grid_size: u32,
     resolution: f32,
     grid: Mutex<DMatrix<f32>>,
-    robot_pose: Pose,
+    robot_pose: [f32; 3],
 }
 
 impl GMapping {
@@ -20,7 +20,7 @@ impl GMapping {
             grid_size: grid_size,
             resolution: resolution,
             grid: grid,
-            robot_pose: Pose::default(),
+            robot_pose: [0.0, 0.0, 0.0],
         }
     }
 
@@ -33,29 +33,26 @@ impl GMapping {
 }
 
 impl Mapping for GMapping {
-    fn update(&mut self, scan_ranges: &[f32], scan_angles: &[f32], odom_pose: &Pose) {
+    fn update(&mut self, scan_data: &[f32], odom_pose: &[f32; 3]) {
         // Update the robot pose
-        self.robot_pose = odom_pose.clone();
+        self.robot_pose = *odom_pose;
 
-        // Process each laser scan point in parallel
-        scan_ranges
-            .par_iter() // Parallel iterator
-            .zip(scan_angles.par_iter())
-            .for_each(|(&range, &angle)| {
-                if range.is_nan() || range.is_infinite() {
+        // Process each laser scan point in parallel (interleaved x, y pairs)
+        scan_data
+            .par_chunks(2) // Parallel iterator
+            .for_each(|point| {
+                let x_robot = point[0];
+                let y_robot = point[1];
+                if !x_robot.is_finite() || !y_robot.is_finite() {
                     return; // Skip invalid measurements
                 }
 
-                // Convert polar to Cartesian coordinates relative to the robot
-                let x_robot = range * angle.cos();
-                let y_robot = range * angle.sin();
-
                 // Transform to world coordinates
-                let x_world = self.robot_pose.x + x_robot * self.robot_pose.theta.cos()
-                    - y_robot * self.robot_pose.theta.sin();
-                let y_world = self.robot_pose.y
-                    + x_robot * self.robot_pose.theta.sin()
-                    + y_robot * self.robot_pose.theta.cos();
+                let x_world = self.robot_pose[0] + x_robot * self.robot_pose[2].cos()
+                    - y_robot * self.robot_pose[2].sin();
+                let y_world = self.robot_pose[1]
+                    + x_robot * self.robot_pose[2].sin()
+                    + y_robot * self.robot_pose[2].cos();
 
                 // Convert world coordinates to grid indices
                 let (grid_x, grid_y) = self.world_to_grid(x_world, y_world);
@@ -70,11 +67,21 @@ impl Mapping for GMapping {
             });
     }
 
-    fn get_grid(&self) -> DMatrix<f32> {
-        self.grid.lock().unwrap().clone()
+    fn get_grid(&self) -> Vec<i8> {
+        self.grid
+            .lock()
+            .unwrap()
+            .as_slice()
+            .par_iter()
+            .map(|&v| if v < 0.0 { -1 } else { (v * 100.0) as i8 })
+            .collect()
     }
 
-    fn get_robot_pose(&self) -> Pose {
-        self.robot_pose.clone()
+    fn get_grid_dimensions(&self) -> (u32, u32) {
+        (self.grid_size, self.grid_size)
+    }
+
+    fn get_robot_pose(&self) -> [f32; 3] {
+        self.robot_pose
     }
 }
