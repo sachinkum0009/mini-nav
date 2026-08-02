@@ -6,7 +6,10 @@ use hiroz::{
     msg::NativeCdrSerdes,
     node::ZNode,
     pubsub::{ZPub, ZSub},
+    service::ZServer,
 };
+use hiroz_msgs::example_interfaces::SetBoolResponse;
+use hiroz_msgs::example_interfaces::srv::SetBool as RosSetBool;
 use hiroz_msgs::nav_msgs::Odometry as RosOdometry;
 use hiroz_msgs::sensor_msgs::LaserScan as RosLaserScan;
 use hiroz_msgs::{builtin_interfaces::Time, nav_msgs::OccupancyGrid as RosOccupancyGrid};
@@ -25,6 +28,8 @@ pub struct NavPub {
     laser_topic: ZSub<RosLaserScan, Sample, NativeCdrSerdes<RosLaserScan>>,
     odom_topic: ZSub<RosOdometry, Sample, NativeCdrSerdes<RosOdometry>>,
     map_topic: ZPub<RosOccupancyGrid, NativeCdrSerdes<RosOccupancyGrid>>,
+    map_srv: ZServer<RosSetBool>,
+    map_name: String,
     gmapping: GMapping,
 }
 
@@ -39,11 +44,14 @@ impl NavPub {
             .create_pub::<RosOccupancyGrid>(&config.map_topic)
             .build()?;
         let gmapping = GMapping::new(config.grid_size, config.resolution);
+        let map_srv = node.create_service::<RosSetBool>("save_map").build()?;
         Ok(Self {
             node,
             laser_topic: laser_sub,
             odom_topic: odom_sub,
             map_topic: map_pub,
+            map_srv,
+            map_name: config.map_name.clone(),
             gmapping: gmapping,
         })
     }
@@ -89,6 +97,16 @@ impl NavPub {
         msg.info.origin.position.y = (rows as f64 / 2.0) * msg.info.resolution as f64;
 
         loop {
+            if let Some(request) = self.map_srv.try_take_request()? {
+                let file_name = format!("{}.pgm", self.map_name);
+                let success = self.gmapping.save_map(&file_name);
+                request
+                    .reply(&SetBoolResponse {
+                        success,
+                        message: file_name,
+                    })
+                    .await?;
+            }
             let odom_msg = self.odom_topic.async_recv().await?;
             let scan_msg = self.laser_topic.async_recv().await?;
             let scan_data = Self::laserscan_to_cartesian(&scan_msg);

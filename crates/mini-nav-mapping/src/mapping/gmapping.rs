@@ -1,3 +1,4 @@
+use std::fs;
 use std::sync::Mutex;
 
 use nalgebra::DMatrix;
@@ -88,5 +89,27 @@ impl Mapping for GMapping {
 
     fn get_robot_pose(&self) -> [f32; 3] {
         self.robot_pose
+    }
+
+    fn save_map(&self, file_name: &str) -> bool {
+        let grid = self.grid.lock().unwrap();
+        let (rows, cols) = (grid.nrows(), grid.ncols());
+        let mut pgm = String::new();
+        pgm.push_str(&format!("P2\n{} {}\n255\n", cols, rows));
+        for y in 0..rows {
+            for x in 0..cols {
+                let v = grid[(y, x)];
+                let pixel = if v < 0.0 {
+                    205
+                } else if v <= 0.0 {
+                    254
+                } else {
+                    0
+                };
+                pgm.push_str(&format!("{} ", pixel));
+            }
+            pgm.push('\n');
+        }
+        fs::write(file_name, pgm).is_ok()
     }
 }

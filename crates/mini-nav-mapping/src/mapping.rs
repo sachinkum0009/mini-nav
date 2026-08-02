@@ -15,6 +15,9 @@ pub trait Mapping {
 
     /// Get the current robot pose.
     fn get_robot_pose(&self) -> [f32; 3];
+
+    /// Save the map
+    fn save_map(&self, file_name: &str) -> bool;
 }
 
 pub use gmapping::GMapping;

@@ -12,6 +12,8 @@ pub struct GmappingConfig {
     pub odom_topic: String,
     #[serde(default = "default_map_topic")]
     pub map_topic: String,
+    #[serde(default = "default_map_name")]
+    pub map_name: String,
     #[serde(default = "default_grid_size")]
     pub grid_size: u32,
     #[serde(default = "default_resolution")]
@@ -27,6 +29,7 @@ impl Default for GmappingConfig {
             laser_topic: "scan".to_string(),
             odom_topic: "odom".to_string(),
             map_topic: "map".to_string(),
+            map_name: "map".to_string(),
             grid_size: 1000,
             resolution: 0.05,
             timer_callback: Duration::from_millis(100),
@@ -56,6 +59,10 @@ fn default_odom_topic() -> String {
 }
 
 fn default_map_topic() -> String {
+    "map".to_string()
+}
+
+fn default_map_name() -> String {
     "map".to_string()
 }
 
