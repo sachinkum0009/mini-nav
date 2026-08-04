@@ -6,6 +6,9 @@ use rayon::prelude::*;
 
 use crate::mapping::Mapping;
 
+/// # Hector Slam implementation
+///
+/// It's better than GMapping to create maps with 
 pub struct HectorSlam {
     _grid_size: u32,
     _resolution: f32,
@@ -14,6 +17,11 @@ pub struct HectorSlam {
 }
 
 impl HectorSlam {
+    /// # Initializes HectorSlam
+    ///
+    /// ## Arguments
+    /// - grid_size: u32
+    /// - resolution: f32
     pub fn new(grid_size: u32, resolution: f32) -> Self {
         let grid = Mutex::new(DMatrix::zeros(grid_size as usize, grid_size as usize));
         Self {
