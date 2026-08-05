@@ -8,7 +8,7 @@ pub trait Mapping {
     fn update(&mut self, scan_data: &[f32], odom_pose: &[f32; 3]);
 
     /// Get the current occupancy grid data (-1 unknown, 0..100 occupied).
-    fn get_grid(&self) -> Vec<i8>;
+    fn get_grid(&self) -> anyhow::Result<Vec<i8>>;
 
     /// Get the occupancy grid dimensions (rows, cols).
     fn get_grid_dimensions(&self) -> (u32, u32);

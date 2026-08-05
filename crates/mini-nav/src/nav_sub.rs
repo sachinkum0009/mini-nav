@@ -162,7 +162,7 @@ async fn spin_map_update(
             euler[2],
         ];
         gmapping.lock().unwrap().update(&scan_data, &odom_pose);
-        msg.data = gmapping.lock().unwrap().get_grid();
+        msg.data = gmapping.lock().unwrap().get_grid()?;
         let t = node.clock().now().as_unix_nanos();
         msg.header.stamp = Time {
             sec: (t / 1_000_000_000) as i32,

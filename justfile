@@ -15,7 +15,7 @@ clippy:
 
 # Build the crate
 build:
-    cargo build
+    cargo build --release
 
 # Execute the test suite
 test:

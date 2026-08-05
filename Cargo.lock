@@ -1700,6 +1700,7 @@ dependencies = [
 name = "mini-nav-mapping"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "hiroz",
  "hiroz-msgs",
  "mini-nav-controller",

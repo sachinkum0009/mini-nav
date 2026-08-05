@@ -73,14 +73,16 @@ impl Mapping for GMapping {
             });
     }
 
-    fn get_grid(&self) -> Vec<i8> {
-        self.grid
+    fn get_grid(&self) -> anyhow::Result<Vec<i8>> {
+        let grid = self
+            .grid
             .lock()
-            .unwrap()
+            .map_err(|_| anyhow::anyhow!("grid mutex poisoned"))?;
+        Ok(grid
             .as_slice()
             .par_iter()
             .map(|&v| if v < 0.0 { -1 } else { (v * 100.0) as i8 })
-            .collect()
+            .collect())
     }
 
     fn get_grid_dimensions(&self) -> (u32, u32) {

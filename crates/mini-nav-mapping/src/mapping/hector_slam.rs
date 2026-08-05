@@ -8,7 +8,7 @@ use crate::mapping::Mapping;
 
 /// # Hector Slam implementation
 ///
-/// It's better than GMapping to create maps with 
+/// It's better than GMapping to create maps with
 pub struct HectorSlam {
     _grid_size: u32,
     _resolution: f32,
@@ -39,14 +39,15 @@ impl Mapping for HectorSlam {
         let _my_grid = DMatrix::<f64>::zeros(self._grid_size as usize, self._grid_size as usize);
     }
 
-    fn get_grid(&self) -> Vec<i8> {
-        self.grid
+    fn get_grid(&self) -> anyhow::Result<Vec<i8>> {
+        Ok(self
+            .grid
             .lock()
-            .unwrap()
+            .map_err(|_| anyhow::anyhow!("grid mutex poisoned"))?
             .as_slice()
             .par_iter()
             .map(|&v| if v < 0.0 { -1 } else { (v * 100.0) as i8 })
-            .collect()
+            .collect())
     }
 
     fn get_grid_dimensions(&self) -> (u32, u32) {
