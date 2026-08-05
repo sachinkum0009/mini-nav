@@ -3,8 +3,10 @@
 /// # A Star
 ///
 /// Path planning algorithm with heuristics
-pub struct AStar {
+pub struct AStar {}
 
+impl AStar {
+    pub fn new() -> anyhow::Result<Self> {
+        Ok(Self {})
+    }
 }
-
-

@@ -1,2 +1,6 @@
 node_name: my_gmapping_node
-laser_topic: base_scan
+laser_topic: scan
+odom_topic: odom
+map_topic: map
+grid_size: 100
+resolution: 0.1
