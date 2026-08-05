@@ -14,3 +14,9 @@ rviz2
 
 ros2 service call /save_map example_interfaces/srv/SetBool "data: true"
 ```
+
+## Commands to install Hiroz-Union
+
+```bash
+cargo install --git https://github.com/ZettaScaleLabs/hiroz.git hiroz-union
+```

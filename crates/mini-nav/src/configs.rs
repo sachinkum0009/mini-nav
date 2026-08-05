@@ -1,3 +1,4 @@
+use hiroz::Result;
 use std::{fs, time::Duration};
 
 use serde::{Deserialize, Serialize};
@@ -38,7 +39,7 @@ impl Default for GmappingConfig {
 }
 
 impl GmappingConfig {
-    pub fn from_yaml_file(path: &str) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn from_yaml_file(path: &str) -> Result<Self> {
         let yaml_content = fs::read_to_string(path)?;
         let config: GmappingConfig = serde_yaml::from_str(&yaml_content)?;
         Ok(config)

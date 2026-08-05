@@ -1,3 +1,4 @@
+use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use hiroz::{
@@ -84,71 +85,33 @@ impl NavPub {
         points
     }
 
-    /// # Async Task for Saving Map
-    async fn spin_save_map(&mut self, duration: &Duration) -> Result<()> {
-        let duration = duration.clone();
-        loop {
-            if let Some(request) = self.map_srv.try_take_request()? {
-                let file_name = format!("{}.pgm", self.map_name);
-                let success = self.gmapping.save_map(&file_name);
-                request
-                    .reply(&SetBoolResponse {
-                        success,
-                        message: file_name,
-                    })
-                    .await?;
-            }
-            tokio::time::sleep(duration).await;
-        }
-    }
-
     /// # Spin the ZNode
     ///
+    /// Runs the map-update and save-map loops concurrently.
+    pub async fn spin(&mut self, duration: &Duration) -> Result<()> {
+        let Self {
+            node,
+            laser_topic,
+            odom_topic,
+            map_topic,
+            map_srv,
+            map_name,
+            gmapping,
+        } = self;
+        let gmapping = Arc::new(Mutex::new(gmapping));
 
-    /// # spin_map_update fn
-    ///
-    async fn spin_map_update(&mut self, duration: &Duration) -> Result<()> {
-        let mut msg = RosOccupancyGrid::default();
-        msg.header.frame_id = "map".into();
-        let (rows, cols) = self.gmapping.get_grid_dimensions();
-        msg.info.width = cols;
-        msg.info.height = rows;
-        msg.info.resolution = self.gmapping.get_resolution();
-        msg.info.origin.position.x = (cols as f64 / 2.0) * msg.info.resolution as f64;
-        msg.info.origin.position.y = (rows as f64 / 2.0) * msg.info.resolution as f64;
-
-        loop {
-            let odom_msg = self.odom_topic.async_recv().await?;
-            let scan_msg = self.laser_topic.async_recv().await?;
-            let scan_data = Self::laserscan_to_cartesian(&scan_msg);
-            let euler = Self::convert_quaternion_to_euler(&[
-                odom_msg.pose.pose.orientation.x,
-                odom_msg.pose.pose.orientation.y,
-                odom_msg.pose.pose.orientation.z,
-                odom_msg.pose.pose.orientation.w,
-            ]);
-            let odom_pose = [
-                odom_msg.pose.pose.position.x as f32,
-                odom_msg.pose.pose.position.y as f32,
-                euler[2],
-            ];
-            self.gmapping.update(&scan_data, &odom_pose);
-            msg.data = self.gmapping.get_grid();
-            let t = self.node.clock().now().as_unix_nanos();
-            msg.header.stamp = Time {
-                sec: (t / 1_000_000_000) as i32,
-                nanosec: (t % 1_000_000_000) as u32,
-            };
-            self.publish_map(&msg).await?;
-            tokio::time::sleep(duration.clone()).await;
-        }
-    }
-
-    async fn spin(&mut self, duration: &Duration) -> Result<()> {
-        // let spin_map_task = self.spin_map_update(duration);
-        // let save_map_task = self.spin_map_update(duration);
-        tokio::try_join!(self.spin_map_update(duration), self.spin_save_map(duration))?;
-
+        println!("spinning node");
+        tokio::try_join!(
+            spin_map_update(
+                node,
+                laser_topic,
+                odom_topic,
+                map_topic,
+                &gmapping,
+                duration,
+            ),
+            spin_save_map(map_srv, &*map_name, &gmapping, duration),
+        )?;
         Ok(())
     }
 
@@ -159,5 +122,77 @@ impl NavPub {
     pub async fn publish_map(&self, msg: &RosOccupancyGrid) -> Result<()> {
         self.map_topic.async_publish(msg).await?;
         Ok(())
+    }
+}
+
+/// # Map Update Loop
+///
+/// Subscribes to odometry and laser scans, updates the SLAM grid, and
+/// publishes the resulting occupancy grid map.
+async fn spin_map_update(
+    node: &ZNode,
+    laser_topic: &ZSub<RosLaserScan, Sample, NativeCdrSerdes<RosLaserScan>>,
+    odom_topic: &ZSub<RosOdometry, Sample, NativeCdrSerdes<RosOdometry>>,
+    map_topic: &ZPub<RosOccupancyGrid, NativeCdrSerdes<RosOccupancyGrid>>,
+    gmapping: &Arc<Mutex<&mut GMapping>>,
+    duration: &Duration,
+) -> Result<()> {
+    let mut msg = RosOccupancyGrid::default();
+    msg.header.frame_id = "map".into();
+    let (rows, cols) = gmapping.lock().unwrap().get_grid_dimensions();
+    msg.info.width = cols;
+    msg.info.height = rows;
+    msg.info.resolution = gmapping.lock().unwrap().get_resolution();
+    msg.info.origin.position.x = (cols as f64 / 2.0) * msg.info.resolution as f64;
+    msg.info.origin.position.y = (rows as f64 / 2.0) * msg.info.resolution as f64;
+
+    loop {
+        let odom_msg = odom_topic.async_recv().await?;
+        let scan_msg = laser_topic.async_recv().await?;
+        let scan_data = NavPub::laserscan_to_cartesian(&scan_msg);
+        let euler = NavPub::convert_quaternion_to_euler(&[
+            odom_msg.pose.pose.orientation.x,
+            odom_msg.pose.pose.orientation.y,
+            odom_msg.pose.pose.orientation.z,
+            odom_msg.pose.pose.orientation.w,
+        ]);
+        let odom_pose = [
+            odom_msg.pose.pose.position.x as f32,
+            odom_msg.pose.pose.position.y as f32,
+            euler[2],
+        ];
+        gmapping.lock().unwrap().update(&scan_data, &odom_pose);
+        msg.data = gmapping.lock().unwrap().get_grid();
+        let t = node.clock().now().as_unix_nanos();
+        msg.header.stamp = Time {
+            sec: (t / 1_000_000_000) as i32,
+            nanosec: (t % 1_000_000_000) as u32,
+        };
+        map_topic.async_publish(&msg).await?;
+        tokio::time::sleep(duration.clone()).await;
+    }
+}
+
+/// # Save Map Loop
+///
+/// Serves the `save_map` service, saving the current grid to a PGM file.
+async fn spin_save_map(
+    map_srv: &mut ZServer<RosSetBool>,
+    map_name: &str,
+    gmapping: &Arc<Mutex<&mut GMapping>>,
+    duration: &Duration,
+) -> Result<()> {
+    loop {
+        if let Some(request) = map_srv.try_take_request()? {
+            let file_name = format!("{}.pgm", map_name);
+            let success = gmapping.lock().unwrap().save_map(&file_name);
+            request
+                .reply(&SetBoolResponse {
+                    success,
+                    message: file_name,
+                })
+                .await?;
+        }
+        tokio::time::sleep(duration.clone()).await;
     }
 }
