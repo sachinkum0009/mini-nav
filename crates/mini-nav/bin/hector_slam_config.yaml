@@ -1,0 +1,6 @@
+node_name: my_hector_slam_node
+laser_topic: scan
+odom_topic: odom
+map_topic: map
+grid_size: 100
+resolution: 0.1
