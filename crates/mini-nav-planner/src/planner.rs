@@ -1,4 +1,5 @@
 pub mod a_star;
+pub mod hybrid_a_star;
 
 /// Planner Trait
 pub trait Planner {
