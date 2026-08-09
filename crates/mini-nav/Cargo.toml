@@ -14,12 +14,19 @@ hiroz = { git = "https://github.com/ZettaScaleLabs/hiroz.git", branch = "main"}
 hiroz-msgs = { git = "https://github.com/ZettaScaleLabs/hiroz.git", branch = "main"}
 mini-nav-controller = { path = "../mini-nav-controller" }
 mini-nav-mapping = { path = "../mini-nav-mapping" }
+mini-nav-planner = { path = "../mini-nav-planner" }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_yaml = "0.9.34"
 zenoh = "1.9.0"
 rayon = "1.12.0"
 anyhow = "1.0.104"
+tracing = "0.1.44"
+tracing-subscriber = "0.3.23"
 
 [[bin]]
 name = "publisher"
 path = "bin/publisher.rs"
+
+[[bin]]
+name = "a_star_planner"
+path = "bin/a_star_planner.rs"
