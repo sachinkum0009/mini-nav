@@ -1,6 +1,6 @@
 // TODO: Implement Hybrid A Star Algorithm for path planning
 
-use crate::planner::Planner;
+use crate::{errors::PlannerError, planner::Planner};
 
 /// # Hybrid A Star
 ///
@@ -9,8 +9,11 @@ pub struct HybridAStar {}
 
 impl HybridAStar {
     /// Initialize the HybridAStar
-    pub fn new() -> anyhow::Result<Self> {
-        Ok(Self {})
+    pub fn new() -> anyhow::Result<Self, PlannerError> {
+        // Ok(Self {})
+        Err(PlannerError::PathPlanError(
+            "Failed to plan the path".into(),
+        ))
     }
 }
 
