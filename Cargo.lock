@@ -1717,6 +1717,7 @@ name = "mini-nav-planner"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "serde",
  "thiserror 2.0.20",
  "tokio",
  "tracing",
