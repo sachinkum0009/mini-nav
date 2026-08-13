@@ -12,12 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// Implementation of Graph Pose SLAM
-#[derive(Default)]
-pub struct GraphPose {}
-
-// impl Default for GraphPose {
-//     fn default() -> Self {
-//         Self {}
-//     }
-// }
+pub mod planner_node;

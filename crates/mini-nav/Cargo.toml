@@ -15,8 +15,8 @@ hiroz-msgs = { git = "https://github.com/ZettaScaleLabs/hiroz.git", branch = "ma
 mini-nav-controller = { path = "../mini-nav-controller" }
 mini-nav-mapping = { path = "../mini-nav-mapping" }
 mini-nav-planner = { path = "../mini-nav-planner" }
-serde = { version = "1.0.229", features = ["derive"] }
-serde_yaml = "0.9.34"
+serde.workspace = true
+serde_yaml.workspace = true
 zenoh = "1.9.0"
 rayon = "1.12.0"
 anyhow = "1.0.104"
@@ -30,3 +30,11 @@ path = "bin/publisher.rs"
 [[bin]]
 name = "a_star_planner"
 path = "bin/a_star_planner.rs"
+
+[[bin]]
+name = "planner"
+path = "bin/planner.rs"
+
+[[bin]]
+name = "test"
+path = "bin/test.rs"
