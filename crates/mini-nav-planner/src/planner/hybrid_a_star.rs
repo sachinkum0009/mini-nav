@@ -1,6 +1,11 @@
 // TODO: Implement Hybrid A Star Algorithm for path planning
 
-use crate::{errors::PlannerError, planner::Planner};
+use tracing::info;
+
+use crate::{
+    errors::PlannerError,
+    planner::{Planner, Trajectory},
+};
 
 /// # Hybrid A Star
 ///
@@ -18,8 +23,8 @@ impl HybridAStar {
 }
 
 impl Planner for HybridAStar {
-    fn plan(&self, start: &[f32; 2], goal: &[f32; 2]) -> Vec<f32> {
-        let traj = vec![0.0];
-        traj
+    fn plan(&self, start: &[f32; 2], goal: &[f32; 2]) -> Trajectory {
+        info!("Planning from {:?} to {:?}", start, goal);
+        Vec::new()
     }
 }

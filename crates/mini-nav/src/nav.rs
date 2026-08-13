@@ -1,6 +1,7 @@
 use std::io::Error;
 
 /// # Mini Nav
+#[derive(Default)]
 pub struct MiniNav {}
 
 impl MiniNav {

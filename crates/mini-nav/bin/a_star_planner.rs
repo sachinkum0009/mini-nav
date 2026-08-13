@@ -1,6 +1,5 @@
-use mini_nav_planner::planner::{AStar, Planner, RRT};
+use mini_nav_planner::planner::{Planner, RRT};
 use tracing::info;
-use tracing_subscriber;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

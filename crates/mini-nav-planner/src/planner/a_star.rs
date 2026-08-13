@@ -1,6 +1,6 @@
 // TODO: Implement A Star Algorithm for path planning
 
-use crate::planner::Planner;
+use crate::planner::{Planner, Point, Trajectory};
 use tracing::{debug, error, info, warn};
 
 /// # A Star
@@ -15,12 +15,11 @@ impl AStar {
 }
 
 impl Planner for AStar {
-    fn plan(&self, start: &[f32; 2], goal: &[f32; 2]) -> Vec<f32> {
+    fn plan(&self, start: &Point, goal: &Point) -> Trajectory {
         error!("this si an error");
         warn!("this is a warning");
         debug!("a star planner started");
         info!("Planning path from {:?} to {:?}", start, goal);
-        let traj = vec![0.0];
-        traj
+        Vec::new()
     }
 }

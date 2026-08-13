@@ -1,4 +1,7 @@
-use crate::{errors::PlannerError, planner::Planner};
+use crate::{
+    errors::PlannerError,
+    planner::{Planner, Trajectory},
+};
 use tracing::info;
 
 pub struct RRT {}
@@ -13,10 +16,9 @@ impl RRT {
 }
 
 impl Planner for RRT {
-    fn plan(&self, start: &[f32; 2], goal: &[f32; 2]) -> Vec<f32> {
+    fn plan(&self, start: &[f32; 2], goal: &[f32; 2]) -> Trajectory {
         let dist = ((goal[0] - start[0]).powi(2) + (goal[1] - start[1]).powi(2)).sqrt();
         info!("distance to reach goal: {}", dist);
-        let traj = Vec::new();
-        traj
+        Vec::new()
     }
 }

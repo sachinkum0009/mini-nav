@@ -18,9 +18,9 @@ impl GMapping {
     pub fn new(grid_size: u32, resolution: f32) -> Self {
         let grid = Mutex::new(DMatrix::zeros(grid_size as usize, grid_size as usize));
         Self {
-            grid_size: grid_size,
-            resolution: resolution,
-            grid: grid,
+            grid_size,
+            resolution,
+            grid,
             robot_pose: [0.0, 0.0, 0.0],
         }
     }

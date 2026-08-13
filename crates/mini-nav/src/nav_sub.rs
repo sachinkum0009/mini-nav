@@ -53,7 +53,7 @@ impl NavPub {
             map_topic: map_pub,
             map_srv,
             map_name: config.map_name.clone(),
-            gmapping: gmapping,
+            gmapping,
         })
     }
 
@@ -169,7 +169,7 @@ async fn spin_map_update(
             nanosec: (t % 1_000_000_000) as u32,
         };
         map_topic.async_publish(&msg).await?;
-        tokio::time::sleep(duration.clone()).await;
+        tokio::time::sleep(*duration).await;
     }
 }
 
@@ -193,6 +193,6 @@ async fn spin_save_map(
                 })
                 .await?;
         }
-        tokio::time::sleep(duration.clone()).await;
+        tokio::time::sleep(*duration).await;
     }
 }

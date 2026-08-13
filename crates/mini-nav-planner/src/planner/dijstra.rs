@@ -1,4 +1,4 @@
-use crate::planner::Planner;
+use crate::planner::{Planner, Trajectory};
 use tracing::info;
 
 /// Dijstra Algorithm
@@ -14,9 +14,8 @@ impl Dijstra {
 }
 
 impl Planner for Dijstra {
-    fn plan(&self, start: &[f32; 2], goal: &[f32; 2]) -> Vec<f32> {
+    fn plan(&self, start: &[f32; 2], goal: &[f32; 2]) -> Trajectory {
         info!("Planning from start: {:?} to goal: {:?}", start, goal);
-        let traj = Vec::new();
-        return traj;
+        Vec::new()
     }
 }

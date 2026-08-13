@@ -1,8 +1,9 @@
 /// Implementation of Graph Pose SLAM
+#[derive(Default)]
 pub struct GraphPose {}
 
-impl GraphPose {
-    pub fn new() -> Self {
-        Self {}
-    }
-}
+// impl Default for GraphPose {
+//     fn default() -> Self {
+//         Self {}
+//     }
+// }
