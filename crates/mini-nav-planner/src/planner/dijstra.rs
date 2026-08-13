@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::planner::{Planner, Trajectory};
+use crate::planner::{Planner, Point, Trajectory};
 use tracing::info;
 
 /// Dijstra Algorithm
@@ -28,7 +28,7 @@ impl Dijstra {
 }
 
 impl Planner for Dijstra {
-    fn plan(&self, start: &[f32; 2], goal: &[f32; 2]) -> Trajectory {
+    fn plan(&self, start: &Point, goal: &Point) -> Trajectory {
         info!("Planning from start: {:?} to goal: {:?}", start, goal);
         Vec::new()
     }

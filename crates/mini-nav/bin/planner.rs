@@ -29,7 +29,7 @@ async fn main() -> Result<()> {
     let planner_config = PlannerConfig::default();
 
     let planner_node = PlannerNode::<HybridAStar>::new(&planner_config, &ctx)?;
-    planner_node.run();
+    planner_node.run().await?;
 
     Ok(())
 }

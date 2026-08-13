@@ -18,7 +18,7 @@ use tracing::info;
 
 use crate::{
     errors::PlannerError,
-    planner::{ConstructiblePlanner, Planner, Trajectory},
+    planner::{ConstructiblePlanner, Planner, Point, Trajectory},
 };
 
 /// # Hybrid A Star
@@ -37,7 +37,7 @@ impl HybridAStar {
 }
 
 impl Planner for HybridAStar {
-    fn plan(&self, start: &[f32; 2], goal: &[f32; 2]) -> Trajectory {
+    fn plan(&self, start: &Point, goal: &Point) -> Trajectory {
         info!("Planning from {:?} to {:?}", start, goal);
         Vec::new()
     }

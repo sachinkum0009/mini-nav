@@ -18,7 +18,7 @@ pub mod hybrid_a_star;
 pub mod rrt;
 
 // types
-pub type Point = [f32; 2];
+pub type Point = [f64; 2];
 pub type Trajectory = Vec<Point>;
 
 /// Planner Trait

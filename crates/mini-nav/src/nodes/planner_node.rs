@@ -18,6 +18,7 @@ use hiroz::context::ZContext;
 use hiroz::msg::NativeCdrSerdes;
 use hiroz::node::ZNode;
 use hiroz::pubsub::ZSub;
+use hiroz_msgs::geometry_msgs::PointStamped as RosPointStamped;
 use hiroz_msgs::nav_msgs::OccupancyGrid as RosOccupancyGrid;
 use hiroz_msgs::nav_msgs::Odometry as RosOdometry;
 use mini_nav_planner::planner::ConstructiblePlanner;
@@ -32,8 +33,8 @@ pub struct PlannerNode<T: Planner> {
     node: ZNode,
     #[expect(dead_code)]
     map_topic: ZSub<RosOccupancyGrid, Sample, NativeCdrSerdes<RosOccupancyGrid>>,
-    #[expect(dead_code)]
     odom_topic: ZSub<RosOdometry, Sample, NativeCdrSerdes<RosOdometry>>,
+    goal_topic: ZSub<RosPointStamped, Sample, NativeCdrSerdes<RosPointStamped>>,
     planner: MyPlanner<T>,
 }
 
@@ -44,19 +45,23 @@ impl<T: ConstructiblePlanner> PlannerNode<T> {
         let node = ctx.create_node(&config.node_name).build()?;
         let odom_sub = node.create_sub::<RosOdometry>(&config.odom_topic).build()?;
         let map_sub = node.create_sub(&config.map_topic).build()?;
+        let goal_sub = node.create_sub(&config.goal_topic).build()?;
         Ok(Self {
             node,
             map_topic: map_sub,
             odom_topic: odom_sub,
+            goal_topic: goal_sub,
             planner,
         })
     }
 
-    pub fn run(&self) {
-        let start = &[5.0, 5.0];
-        let goal = &[10.0, 10.0];
+    pub async fn run(&self) -> Result<()> {
+        let goal_msg = self.goal_topic.async_recv().await?;
+        let odom_msg = self.odom_topic.async_recv().await?;
+        let start = &[odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y];
+        let goal = &[goal_msg.point.x, goal_msg.point.y];
         let traj = self.planner.plan(start, goal);
-        println!("running ti");
         info!("traj: {:?}", traj);
+        Ok(())
     }
 }

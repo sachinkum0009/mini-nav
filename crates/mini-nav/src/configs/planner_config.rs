@@ -25,6 +25,8 @@ pub struct PlannerConfig {
     pub map_topic: String,
     #[serde(default = "default_odom_topic")]
     pub odom_topic: String,
+    #[serde(default = "default_goal_topic")]
+    pub goal_topic: String,
     #[serde(default = "default_planner_name")]
     pub planner_name: String,
     #[serde(default = "default_timer_callback")]
@@ -37,6 +39,7 @@ impl Default for PlannerConfig {
             node_name: "planner_node".to_string(),
             map_topic: "map".to_string(),
             odom_topic: "odom".to_string(),
+            goal_topic: "goal".to_string(),
             planner_name: "rrt".to_string(),
             timer_callback: Duration::from_millis(100),
         }
@@ -69,6 +72,10 @@ fn default_map_topic() -> String {
 
 fn default_odom_topic() -> String {
     "odom".to_string()
+}
+
+fn default_goal_topic() -> String {
+    "goal".to_string()
 }
 
 fn default_planner_name() -> String {

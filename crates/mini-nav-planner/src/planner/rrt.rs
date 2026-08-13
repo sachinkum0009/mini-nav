@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::planner::{ConstructiblePlanner, Planner, Trajectory};
+use crate::planner::{ConstructiblePlanner, Planner, Point, Trajectory};
 use anyhow::Ok;
 use tracing::info;
 
@@ -37,7 +37,7 @@ impl ConstructiblePlanner for RRT {
 }
 
 impl Planner for RRT {
-    fn plan(&self, start: &[f32; 2], goal: &[f32; 2]) -> Trajectory {
+    fn plan(&self, start: &Point, goal: &Point) -> Trajectory {
         let dist = ((goal[0] - start[0]).powi(2) + (goal[1] - start[1]).powi(2)).sqrt();
         info!("distance to reach goal: {}", dist);
         Vec::new()
