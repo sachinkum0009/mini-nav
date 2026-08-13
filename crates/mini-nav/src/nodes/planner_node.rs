@@ -12,25 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use hiroz::Builder;
+use hiroz::Result;
+use hiroz::context::ZContext;
 use hiroz::msg::NativeCdrSerdes;
 use hiroz::node::ZNode;
 use hiroz::pubsub::ZSub;
 use hiroz_msgs::nav_msgs::OccupancyGrid as RosOccupancyGrid;
 use hiroz_msgs::nav_msgs::Odometry as RosOdometry;
-use mini_nav_planner::planner::Planner;
-use mini_nav_planner::planner::{AStar, MyPlanner};
+use mini_nav_planner::planner::ConstructiblePlanner;
+use mini_nav_planner::planner::{MyPlanner, Planner};
 use tracing::info;
 use zenoh::sample::Sample;
 
+use crate::configs::PlannerConfig;
+
 pub struct PlannerNode<T: Planner> {
+    #[expect(dead_code)]
+    node: ZNode,
+    #[expect(dead_code)]
+    map_topic: ZSub<RosOccupancyGrid, Sample, NativeCdrSerdes<RosOccupancyGrid>>,
+    #[expect(dead_code)]
+    odom_topic: ZSub<RosOdometry, Sample, NativeCdrSerdes<RosOdometry>>,
     planner: MyPlanner<T>,
 }
 
-impl<T: Planner> PlannerNode<T> {
-    pub fn new(planner_impl: T) -> Self {
-        Self {
-            planner: MyPlanner::new(planner_impl),
-        }
+impl<T: ConstructiblePlanner> PlannerNode<T> {
+    pub fn new(config: &PlannerConfig, ctx: &ZContext) -> Result<Self> {
+        let child = T::new()?;
+        let planner = MyPlanner::new(child);
+        let node = ctx.create_node(&config.node_name).build()?;
+        let odom_sub = node.create_sub::<RosOdometry>(&config.odom_topic).build()?;
+        let map_sub = node.create_sub(&config.map_topic).build()?;
+        Ok(Self {
+            node,
+            map_topic: map_sub,
+            odom_topic: odom_sub,
+            planner,
+        })
     }
 
     pub fn run(&self) {

@@ -31,6 +31,18 @@ pub struct PlannerConfig {
     pub timer_callback: Duration,
 }
 
+impl Default for PlannerConfig {
+    fn default() -> Self {
+        Self {
+            node_name: "planner_node".to_string(),
+            map_topic: "map".to_string(),
+            odom_topic: "odom".to_string(),
+            planner_name: "rrt".to_string(),
+            timer_callback: Duration::from_millis(100),
+        }
+    }
+}
+
 impl PlannerConfig {
     /// Loads a [`PlannerConfig`] from a YAML configuration file.
     ///

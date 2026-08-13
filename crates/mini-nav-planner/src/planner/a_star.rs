@@ -14,7 +14,7 @@
 
 // TODO: Implement A Star Algorithm for path planning
 
-use crate::planner::{Planner, Point, Trajectory};
+use crate::planner::{ConstructiblePlanner, Planner, Point, Trajectory};
 use tracing::{debug, error, info, warn};
 
 /// # A Star
@@ -24,6 +24,12 @@ pub struct AStar {}
 
 impl AStar {
     pub fn new() -> anyhow::Result<Self> {
+        Ok(Self {})
+    }
+}
+
+impl ConstructiblePlanner for AStar {
+    fn new() -> anyhow::Result<Self> {
         Ok(Self {})
     }
 }

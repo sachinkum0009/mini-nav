@@ -14,38 +14,21 @@
 
 use hiroz::{Builder, Result, context::ZContextBuilder};
 use mini_nav::{configs::PlannerConfig, nodes::planner_node::PlannerNode};
-use mini_nav_planner::planner::AStar;
-
-// struct Parent {}
-
-// impl Parent {
-//     fn do_something() {
-//         println!("doing something");
-//     }
-// }
-
-// struct ChildA {
-
-// }
-
-// struct ChildB {
-
-// }
+#[allow(unused_imports)]
+use mini_nav_planner::planner::{ConstructiblePlanner, HybridAStar};
 
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt::init();
-    // let _ctx = ZContextBuilder::default()
-    //     .with_connect_endpoints(["tcp/127.0.0.1:7447"])
-    //     .with_shm_enabled()?
-    //     .build()?;
+    let ctx = ZContextBuilder::default()
+        .with_connect_endpoints(["tcp/127.0.0.1:7447"])
+        .with_shm_enabled()?
+        .build()?;
 
-    // let _planner_config = PlannerConfig::from_yaml_file("config.yaml");
+    // let planner_config = PlannerConfig::from_yaml_file("config.yaml")?;
+    let planner_config = PlannerConfig::default();
 
-    // let a_star = AStar::new()?;
-
-    // let planner_node = PlannerNode::new(a_star);
-    let planner_node = PlannerNode::<AStar>::new(AStar);
+    let planner_node = PlannerNode::<HybridAStar>::new(&planner_config, &ctx)?;
     planner_node.run();
 
     Ok(())

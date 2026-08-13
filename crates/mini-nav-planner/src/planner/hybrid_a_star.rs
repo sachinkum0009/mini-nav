@@ -18,7 +18,7 @@ use tracing::info;
 
 use crate::{
     errors::PlannerError,
-    planner::{Planner, Trajectory},
+    planner::{ConstructiblePlanner, Planner, Trajectory},
 };
 
 /// # Hybrid A Star
@@ -28,11 +28,11 @@ pub struct HybridAStar {}
 
 impl HybridAStar {
     /// Initialize the HybridAStar
-    pub fn new() -> anyhow::Result<Self, PlannerError> {
-        // Ok(Self {})
-        Err(PlannerError::PathPlanError(
-            "Failed to plan the path".into(),
-        ))
+    pub fn new() -> Result<Self, PlannerError> {
+        Ok(Self {})
+        // Err(PlannerError::PathPlanError(
+        //     "failed to construct hybrid a star".into(),
+        // ))
     }
 }
 
@@ -40,5 +40,12 @@ impl Planner for HybridAStar {
     fn plan(&self, start: &[f32; 2], goal: &[f32; 2]) -> Trajectory {
         info!("Planning from {:?} to {:?}", start, goal);
         Vec::new()
+    }
+}
+
+impl ConstructiblePlanner for HybridAStar {
+    fn new() -> anyhow::Result<Self> {
+        let planner = Self::new()?;
+        Ok(planner)
     }
 }

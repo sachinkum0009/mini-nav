@@ -27,25 +27,9 @@ pub trait Planner {
     fn plan(&self, start: &Point, goal: &Point) -> Trajectory;
 }
 
-// #[derive(Deserialize)]
-// #[serde(tag = "type", rename_all = "snake_case")]
-// pub enum AnyPlanner {
-//     AStar(AStar),
-//     Dijstra(Dijstra),
-//     HybridAStar(HybridAStar),
-//     Rrt(RRT),
-// }
-
-// impl Planner for AnyPlanner {
-//     fn plan(&self, start: &Point, goal: &Point) -> Trajectory {
-//         match self {
-//             AnyPlanner::AStar(p) => p.plan(start, goal),
-//             AnyPlanner::Dijstra(p) => p.plan(start, goal),
-//             AnyPlanner::HybridAStar(p) => p.plan(start, goal),
-//             AnyPlanner::Rrt(p) => p.plan(start, goal),
-//         }
-//     }
-// }
+pub trait ConstructiblePlanner: Planner + Sized {
+    fn new() -> anyhow::Result<Self>;
+}
 
 pub struct MyPlanner<T: Planner> {
     child: T,

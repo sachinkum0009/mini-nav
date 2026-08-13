@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use mini_nav_planner::planner::{Planner, RRT};
+use mini_nav_planner::planner::{ConstructiblePlanner, Planner, RRT};
 use tracing::info;
 
 #[tokio::main]

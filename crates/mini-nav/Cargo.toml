@@ -34,7 +34,3 @@ path = "bin/a_star_planner.rs"
 [[bin]]
 name = "planner"
 path = "bin/planner.rs"
-
-[[bin]]
-name = "test"
-path = "bin/test.rs"

@@ -12,20 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::{
-    errors::PlannerError,
-    planner::{Planner, Trajectory},
-};
+use crate::planner::{ConstructiblePlanner, Planner, Trajectory};
+use anyhow::Ok;
 use tracing::info;
 
 pub struct RRT {}
 
-impl RRT {
-    pub fn new() -> anyhow::Result<Self, PlannerError> {
-        // Ok(Self {})
-        Err(PlannerError::PathPlanError(
-            "Failed to plan the path".into(),
-        ))
+// impl RRT {
+//     pub fn new() -> anyhow::Result<Self, PlannerError> {
+//         // Ok(Self {})
+//         Err(PlannerError::PathPlanError(
+//             "Failed to plan the path".into(),
+//         ))
+//     }
+// }
+
+impl ConstructiblePlanner for RRT {
+    fn new() -> anyhow::Result<Self> {
+        Ok(Self {})
+        // Err(PlannerError::PathPlanError(
+        //     "Failed to plan the path".into(),
+        // ))
     }
 }
 
