@@ -14,6 +14,7 @@
 
 use hiroz::{Builder, Result, context::ZContextBuilder};
 use mini_nav::{configs::PlannerConfig, nodes::planner_node::PlannerNode};
+use mini_nav_planner::planner::Dijstra;
 #[allow(unused_imports)]
 use mini_nav_planner::planner::{ConstructiblePlanner, HybridAStar};
 
@@ -21,15 +22,15 @@ use mini_nav_planner::planner::{ConstructiblePlanner, HybridAStar};
 async fn main() -> Result<()> {
     tracing_subscriber::fmt::init();
     let ctx = ZContextBuilder::default()
-        .with_connect_endpoints(["tcp/127.0.0.1:7447"])
+        .with_connect_endpoints(["tcp/127.0.0.1:7447"]) // TODO(Sachin): Intead of this load the config from yaml file
         .with_shm_enabled()?
         .build()?;
 
     // let planner_config = PlannerConfig::from_yaml_file("config.yaml")?;
     let planner_config = PlannerConfig::default();
 
-    let planner_node = PlannerNode::<HybridAStar>::new(&planner_config, &ctx)?;
-    planner_node.run().await?;
+    let planner_node = PlannerNode::<Dijstra>::new(&planner_config, &ctx)?;
+    planner_node.spin(&planner_config.timer_callback).await?;
 
     Ok(())
 }

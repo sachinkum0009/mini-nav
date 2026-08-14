@@ -28,7 +28,7 @@ pub trait Planner {
 }
 
 pub trait ConstructiblePlanner: Planner + Sized {
-    fn new() -> anyhow::Result<Self>;
+    fn new(max_iter: u32) -> anyhow::Result<Self>;
 }
 
 pub struct MyPlanner<T: Planner> {

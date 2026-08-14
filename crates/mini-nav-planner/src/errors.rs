@@ -18,4 +18,6 @@ use thiserror::Error;
 pub enum PlannerError {
     #[error("Failed to plan path")]
     PathPlanError(String),
+    #[error("Not implemented")]
+    NotImplemented(String),
 }

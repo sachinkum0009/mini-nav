@@ -12,18 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::planner::{Planner, Point, Trajectory};
+use std::collections::BinaryHeap;
+
+use crate::planner::{ConstructiblePlanner, Planner, Point, Trajectory};
 use tracing::info;
 
 /// Dijstra Algorithm
 pub struct Dijstra {
-    pub max_iter: i32,
+    pub max_iter: u32,
 }
 
 impl Dijstra {
     /// Initialize the Dijstra Algorithm
-    pub fn new(max_iter: i32) -> Self {
+    pub fn new(max_iter: u32) -> Self {
         Self { max_iter }
+    }
+}
+
+impl ConstructiblePlanner for Dijstra {
+    fn new(max_iter: u32) -> anyhow::Result<Self> {
+        Ok(Self::new(max_iter))
     }
 }
 

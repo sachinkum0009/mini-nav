@@ -31,6 +31,8 @@ pub struct PlannerConfig {
     pub planner_name: String,
     #[serde(default = "default_timer_callback")]
     pub timer_callback: Duration,
+    #[serde(default = "default_max_iter")]
+    pub max_iter: u32,
 }
 
 impl Default for PlannerConfig {
@@ -42,6 +44,7 @@ impl Default for PlannerConfig {
             goal_topic: "goal".to_string(),
             planner_name: "rrt".to_string(),
             timer_callback: Duration::from_millis(100),
+            max_iter: 100,
         }
     }
 }
@@ -84,4 +87,8 @@ fn default_planner_name() -> String {
 
 fn default_timer_callback() -> Duration {
     Duration::from_millis(100)
+}
+
+fn default_max_iter() -> u32 {
+    100
 }

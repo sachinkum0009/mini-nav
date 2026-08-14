@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::time::Duration;
+
 use hiroz::Builder;
 use hiroz::Result;
 use hiroz::context::ZContext;
@@ -40,7 +42,7 @@ pub struct PlannerNode<T: Planner> {
 
 impl<T: ConstructiblePlanner> PlannerNode<T> {
     pub fn new(config: &PlannerConfig, ctx: &ZContext) -> Result<Self> {
-        let child = T::new()?;
+        let child = T::new(config.max_iter)?;
         let planner = MyPlanner::new(child);
         let node = ctx.create_node(&config.node_name).build()?;
         let odom_sub = node.create_sub::<RosOdometry>(&config.odom_topic).build()?;
@@ -55,13 +57,16 @@ impl<T: ConstructiblePlanner> PlannerNode<T> {
         })
     }
 
-    pub async fn run(&self) -> Result<()> {
-        let goal_msg = self.goal_topic.async_recv().await?;
-        let odom_msg = self.odom_topic.async_recv().await?;
-        let start = &[odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y];
-        let goal = &[goal_msg.point.x, goal_msg.point.y];
-        let traj = self.planner.plan(start, goal);
-        info!("traj: {:?}", traj);
-        Ok(())
+    /// Spins the node
+    pub async fn spin(&self, duration: &Duration) -> Result<()> {
+        loop {
+            let goal_msg = self.goal_topic.async_recv().await?;
+            let odom_msg = self.odom_topic.async_recv().await?;
+            let start = &[odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y];
+            let goal = &[goal_msg.point.x, goal_msg.point.y];
+            let traj = self.planner.plan(start, goal);
+            info!("traj: {:?}", traj);
+            tokio::time::sleep(*duration).await;
+        }
     }
 }

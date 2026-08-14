@@ -14,23 +14,31 @@
 
 // TODO: Implement A Star Algorithm for path planning
 
-use crate::planner::{ConstructiblePlanner, Planner, Point, Trajectory};
+use crate::{
+    errors::PlannerError,
+    planner::{ConstructiblePlanner, Planner, Point, Trajectory},
+};
 use tracing::{debug, error, info, warn};
 
 /// # A Star
 ///
 /// Path planning algorithm with heuristics
-pub struct AStar {}
+pub struct AStar {
+    max_iter: u32,
+}
 
 impl AStar {
-    pub fn new() -> anyhow::Result<Self> {
-        Ok(Self {})
+    pub fn new(max_iter: u32) -> Result<Self, PlannerError> {
+        // Ok(Self { max_iter })
+        Err(PlannerError::NotImplemented(
+            "AStart algo is not yet implemented".into(),
+        ))
     }
 }
 
 impl ConstructiblePlanner for AStar {
-    fn new() -> anyhow::Result<Self> {
-        Ok(Self {})
+    fn new(max_iter: u32) -> anyhow::Result<Self> {
+        Ok(Self::new(max_iter)?)
     }
 }
 

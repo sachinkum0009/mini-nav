@@ -24,15 +24,17 @@ use crate::{
 /// # Hybrid A Star
 ///
 /// Path planning algorithm which considers the kinematics of the robot while planning the path, to deliver the trajectory which is drivable by robot.
-pub struct HybridAStar {}
+pub struct HybridAStar {
+    max_iter: u32,
+}
 
 impl HybridAStar {
     /// Initialize the HybridAStar
-    pub fn new() -> Result<Self, PlannerError> {
-        Ok(Self {})
-        // Err(PlannerError::PathPlanError(
-        //     "failed to construct hybrid a star".into(),
-        // ))
+    pub fn new(max_iter: u32) -> Result<Self, PlannerError> {
+        // Ok(Self { max_iter })
+        Err(PlannerError::NotImplemented(
+            "Hybrid AStar algo is not implemented.".into(),
+        ))
     }
 }
 
@@ -44,8 +46,8 @@ impl Planner for HybridAStar {
 }
 
 impl ConstructiblePlanner for HybridAStar {
-    fn new() -> anyhow::Result<Self> {
-        let planner = Self::new()?;
+    fn new(max_iter: u32) -> anyhow::Result<Self> {
+        let planner = Self::new(max_iter)?;
         Ok(planner)
     }
 }
