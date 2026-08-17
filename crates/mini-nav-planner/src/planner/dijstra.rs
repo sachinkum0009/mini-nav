@@ -17,6 +17,11 @@ use std::collections::BinaryHeap;
 use crate::planner::{ConstructiblePlanner, Planner, Point, Trajectory};
 use tracing::info;
 
+struct Node {
+    point: Point,
+    rank: i32,
+}
+
 /// Dijstra Algorithm
 pub struct Dijstra {
     pub max_iter: u32,
@@ -37,6 +42,10 @@ impl ConstructiblePlanner for Dijstra {
 
 impl Planner for Dijstra {
     fn plan(&self, start: &Point, goal: &Point) -> Trajectory {
+        let node = Node {
+            point: *start,
+            rank: 0,
+        };
         info!("Planning from start: {:?} to goal: {:?}", start, goal);
         Vec::new()
     }
