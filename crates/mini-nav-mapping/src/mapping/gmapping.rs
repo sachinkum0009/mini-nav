@@ -53,6 +53,7 @@ impl GMapping {
 }
 
 impl Mapping for GMapping {
+    // TODO(Sachin): Maybe need to use Nalgebra's D-Matrix
     fn update(&mut self, scan_data: &[f32], odom_pose: &[f32; 3]) {
         // Update the robot pose
         self.robot_pose = *odom_pose;
@@ -61,8 +62,8 @@ impl Mapping for GMapping {
         scan_data
             .par_chunks(2) // Parallel iterator
             .for_each(|point| {
-                let x_robot = point[0];
-                let y_robot = point[1];
+                let x_robot = point.get(0).unwrap();
+                let y_robot = point.get(1).unwrap();
                 if !x_robot.is_finite() || !y_robot.is_finite() {
                     return; // Skip invalid measurements
                 }

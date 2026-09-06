@@ -39,9 +39,9 @@ impl ConstructiblePlanner for RRT {
 }
 
 impl Planner for RRT {
-    fn plan(&self, start: &Point, goal: &Point) -> Trajectory {
+    fn plan(&self, start: &Point, goal: &Point) -> Result<Trajectory, PlannerError> {
         let dist = ((goal[0] - start[0]).powi(2) + (goal[1] - start[1]).powi(2)).sqrt();
         info!("distance to reach goal: {}", dist);
-        Vec::new()
+        Ok(Vec::new())
     }
 }

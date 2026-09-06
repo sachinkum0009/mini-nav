@@ -39,9 +39,9 @@ impl HybridAStar {
 }
 
 impl Planner for HybridAStar {
-    fn plan(&self, start: &Point, goal: &Point) -> Trajectory {
+    fn plan(&self, start: &Point, goal: &Point) -> Result<Trajectory, PlannerError> {
         info!("Planning from {:?} to {:?}", start, goal);
-        Vec::new()
+        Ok(Vec::new())
     }
 }
 

@@ -43,11 +43,11 @@ impl ConstructiblePlanner for AStar {
 }
 
 impl Planner for AStar {
-    fn plan(&self, start: &Point, goal: &Point) -> Trajectory {
+    fn plan(&self, start: &Point, goal: &Point) -> Result<Trajectory, PlannerError> {
         error!("this si an error");
         warn!("this is a warning");
         debug!("a star planner started");
         info!("Planning path from {:?} to {:?}", start, goal);
-        Vec::new()
+        Ok(Vec::new())
     }
 }

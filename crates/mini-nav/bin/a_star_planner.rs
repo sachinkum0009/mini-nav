@@ -12,15 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use mini_nav::nodes::planner_node::PlannerNode;
 use mini_nav_planner::planner::{ConstructiblePlanner, Planner, RRT};
 use tracing::info;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    // Application level result handling
     tracing_subscriber::fmt::init();
     let start = &[5.0, 5.0];
     let goal = &[10.0, 10.0];
-    let a_star = RRT::new()?;
+    let a_star = RRT::new(100)?;
+    // let a_star2 = PlannerNode::<RRT>::new(config, ctx)
     let traj = a_star.plan(start, goal);
     info!("traj: {:?}", traj);
     Ok(())
