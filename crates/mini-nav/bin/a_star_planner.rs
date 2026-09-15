@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use mini_nav::nodes::planner_node::PlannerNode;
 use mini_nav_planner::planner::{ConstructiblePlanner, Planner, RRT};
 use tracing::info;
 
@@ -23,8 +22,13 @@ async fn main() -> anyhow::Result<()> {
     let start = &[5.0, 5.0];
     let goal = &[10.0, 10.0];
     let a_star = RRT::new(100)?;
-    // let a_star2 = PlannerNode::<RRT>::new(config, ctx)
-    let traj = a_star.plan(start, goal);
-    info!("traj: {:?}", traj);
+    let traj = a_star.plan(start, goal)?;
+
+    let a = 10;
+
+    for t in traj {
+        info!("traj: {:?}", t);
+    }
+
     Ok(())
 }

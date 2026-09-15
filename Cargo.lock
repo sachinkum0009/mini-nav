@@ -1696,6 +1696,8 @@ dependencies = [
 name = "mini-nav-controller"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "nalgebra",
  "tokio",
 ]
 

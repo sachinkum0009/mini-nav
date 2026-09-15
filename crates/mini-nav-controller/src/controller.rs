@@ -13,4 +13,27 @@
 // limitations under the License.
 
 /// Controller
-pub struct Controller;
+pub mod pid;
+
+// Abstract factory for the controllers
+pub trait AbstractFactory {
+    fn build();
+}
+
+// Abstract Products (Traits)
+pub trait Controller {
+    fn compute_action(&self, current_state: f64, target_state: f64) -> f64;
+}
+
+pub trait TuningConfig {
+    fn display_parameters(&self);
+}
+
+// The Abstract Factory
+pub trait ControllerFactory {
+    type C: Controller;
+    type T: TuningConfig;
+
+    fn create_controller(&self, config: &Self::T) -> Self::C;
+    fn create_default_config(&self) -> Self::T;
+}

@@ -12,3 +12,9 @@ keywords = ["mininav", "controller", "navigation"]
 
 [dependencies]
 tokio = { version = "1.53.1", features = ["full"] }
+nalgebra.workspace = true
+anyhow.workspace = true
+
+[[bin]]
+name = "controller_bin"
+path = "bin/controller_bin.rs"

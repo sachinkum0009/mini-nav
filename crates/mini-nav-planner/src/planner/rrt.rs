@@ -25,10 +25,10 @@ pub struct RRT {
 
 impl RRT {
     pub fn new(max_iter: u32) -> Result<Self, PlannerError> {
-        // Ok(Self { max_iter })
-        Err(PlannerError::NotImplemented(
-            "RRT Algo is not implmemented".into(),
-        ))
+        Ok(Self { max_iter })
+        // Err(PlannerError::NotImplemented(
+        //     "RRT Algo is not implmemented".into(),
+        // ))
     }
 }
 
@@ -42,6 +42,13 @@ impl Planner for RRT {
     fn plan(&self, start: &Point, goal: &Point) -> Result<Trajectory, PlannerError> {
         let dist = ((goal[0] - start[0]).powi(2) + (goal[1] - start[1]).powi(2)).sqrt();
         info!("distance to reach goal: {}", dist);
-        Ok(Vec::new())
+        let mut traj = Trajectory::new();
+        traj.push([1.0, 2.0]);
+        traj.push([3.0, 3.0]);
+        traj.push([4.0, 7.0]);
+        traj.push([5.0, 9.0]);
+        traj.push([6.0, 9.0]);
+        traj.push([7.0, 9.0]);
+        Ok(traj)
     }
 }
